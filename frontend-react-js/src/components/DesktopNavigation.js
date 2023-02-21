@@ -25,9 +25,9 @@ export default function DesktopNavigation(props) {
       handle="messages" 
       active={props.active} />
     profileLink = <DesktopNavigationLink 
-      url="/@andrewbrown" 
-      name="Profile"
-      handle="profile"
+      url="/notifications" 
+      name="Notifications"
+      handle="notifications"
       active={props.active} />
   }
 
