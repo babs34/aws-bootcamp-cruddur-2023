@@ -14,6 +14,11 @@ from services.messages import *
 from services.create_message import *
 from services.show_activity import *
 
+#X-RAY
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
+
 #honeycomb
 from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
@@ -30,6 +35,11 @@ provider.add_span_processor(processor)
 trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
 
+# X-RAY
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+
+
 #show this in the logs within the backend-flask app(STDOUT)
 provider = TracerProvider()
 processor = BatchSpanProcessor(OTLPSpanExporter())
@@ -40,6 +50,8 @@ tracer = trace.get_tracer(__name__)
 #honey comb .... 
 #initialize automatic instrumentation with flask
 app = Flask(__name__)
+
+XRayMiddleware(app, xray_recorder)
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
 
