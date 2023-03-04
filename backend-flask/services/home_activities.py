@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from opentelemetry import trace
+import logging
 tracer = trace.get_tracer("home.activities")
 class HomeActivities:
   def run():
+    #Logger.info("HomeActivities")
     with tracer.start_as_current_span("home.ctivities-mock-data"):
       span = trace.get_current_span()
       span.set_attribute("app.now", now.isoformat())
