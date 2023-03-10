@@ -24,7 +24,7 @@ export default function HomeFeedPage() {
   const loadData = async () => {
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
-      const res = await fetch(backend_url, {
+      const res = await fetch(backend_url,{
         method: "GET"
       });
       let resJson = await res.json();
@@ -59,45 +59,41 @@ const checkAuth = async () => {
   .catch((err) => console.log(err));
 };
 
-// check when the page loads if we are authenicated
+
+
 React.useEffect(()=>{
+  //prevents double call
+  if (dataFetchedRef.current) return;
+  dataFetchedRef.current = true; 
+
   loadData();
   checkAuth();
 }, [])
 
-  React.useEffect(()=>{
-    //prevents double call
-    if (dataFetchedRef.current) return;
-    dataFetchedRef.current = true;
-
-    loadData();
-    checkAuth();
-  }, [])
-
-  return (
-    <article>
-      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
-      <div className='content'>
-        <ActivityForm  
-          popped={popped}
-          setPopped={setPopped} 
-          setActivities={setActivities} 
-        />
-        <ReplyForm 
-          activity={replyActivity} 
-          popped={poppedReply} 
-          setPopped={setPoppedReply} 
-          setActivities={setActivities} 
-          activities={activities} 
-        />
-        <ActivityFeed 
-          title="Home" 
-          setReplyActivity={setReplyActivity} 
-          setPopped={setPoppedReply} 
-          activities={activities} 
-        />
-      </div>
-      <DesktopSidebar user={user} />
-    </article>
-  );
+return (
+  <article>
+    <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+    <div className='content'>
+      <ActivityForm  
+        popped={popped}
+        setPopped={setPopped} 
+        setActivities={setActivities} 
+      />
+      <ReplyForm 
+        activity={replyActivity} 
+        popped={poppedReply} 
+        setPopped={setPoppedReply} 
+        setActivities={setActivities} 
+        activities={activities} 
+      />
+      <ActivityFeed 
+        title="Home" 
+        setReplyActivity={setReplyActivity} 
+        setPopped={setPoppedReply} 
+        activities={activities} 
+      />
+    </div>
+    <DesktopSidebar user={user} />
+  </article>
+);
 }
