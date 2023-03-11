@@ -52,8 +52,8 @@ tracer = trace.get_tracer(__name__)
 
 
 # X-RAY
-xray_url = os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+#xray_url = os.getenv("AWS_XRAY_URL")
+#xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
 
 
 #show this in the logs within the backend-flask app(STDOUT)
@@ -65,37 +65,37 @@ tracer = trace.get_tracer(__name__)
 
 #honey comb .... 
 #initialize automatic instrumentation with flask
-app = Flask(__name__)
 
-XRayMiddleware(app, xray_recorder)
-FlaskInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()
+
+##XRayMiddleware(app, xray_recorder)
+##FlaskInstrumentor().instrument_app(app)
+##RequestsInstrumentor().instrument()
 
 # Rollbar ----------
-rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
-@app.before_first_request
-def init_rollbar():
-    """init rollbar module"""
-    rollbar.init(
+##rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+##@app.before_first_request
+##def init_rollbar():
+    ##"""init rollbar module"""
+    ##rollbar.init(
         # access token
-        rollbar_access_token,
+        ##rollbar_access_token,
         # environment name
-        'production',
+        ##'production',
         # server root directory, makes tracebacks prettier
-        root=os.path.dirname(os.path.realpath(__file__)),
+        ##root=os.path.dirname(os.path.realpath(__file__)),
         # flask already sets up logging
-        allow_logging_basic_config=False)
+        ##allow_logging_basic_config=False)
     # send exceptions from `app` to rollbar, using flask's signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+    ##got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
-
+app = Flask(__name__)
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
 origins = [frontend, backend]
 cors = CORS(
   app, 
   resources={r"/api/*": {"origins": origins}},
-  headers=['Content-Type','Authorization'],
+  headers=['content-Type','Authorization'],
   expose_headers='Authorization',
   methods="OPTIONS,GET,HEAD,POST"
 )
@@ -104,7 +104,7 @@ cors = CORS(
 
 @app.route("/api/activities/home", methods=['GET'])
 def data_home():
-  data = HomeActivities.run(logger=LOGGER)
+  data = HomeActivities.run()
   return data, 200
 @app.route("/api/activities/notifications", methods=['GET'])
 def data_notifications():
@@ -119,10 +119,10 @@ def data_message_groups():
   else:
     return model['data'], 200
 
-@app.route('/rollbar/test')
-def rollbar_test():
-    rollbar.report_message('Hello World!', 'warning')
-    return "Hello World!"
+##@app.route('/rollbar/test')
+##def rollbar_test():
+    ##rollbar.report_message('Hello World!', 'warning')
+    ##return "Hello World!"
 
 @app.route("/api/messages/@<string:handle>", methods=['GET'])
 def data_messages(handle):
